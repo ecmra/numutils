@@ -31,6 +31,7 @@ pub fn lnfact(n:u32) -> f32{
 }
 
 
+
 /// return log beta(z,w)
 pub fn betaln(z: f32, w: f32) -> f32 {
     return gammln(z) + gammln(w) - gammln(z + w);
@@ -118,6 +119,23 @@ pub fn logbico(n: u32, k: u32) -> f32 {
 }
 
 
+/// incomplete beta
+///
+/// p227
+pub fn betai(x:f32, a:f32, b:f32) -> f32 {
+    let num0ln = betaln(a + 1.0 ,1.0) + f32::ln(x);
+    let den0ln = betaln(a+b, 1.0);
+    let (mut numln,  mut denln) = (num0ln, den0ln);
+    let maxit:u32 = 100;
+    let mut s:f32 = f32::exp(num0ln - den0ln);
+    for n in 1..=maxit {
+	numln = numln + f32::ln(n as f32) - f32::ln(a + n as f32 + 1.0) + f32::ln(x) ;
+	denln = denln + f32::ln(n as f32) - f32::ln( a + b + n as f32);
+	s += f32::exp(numln - denln);
+    }
+    let f1 = f32::powf(x, a) * f32::powf(1.0 - x, b) /(a * f32::exp(betaln(a,b))); 
+    return f1 * (1.0 + s);
+}
 
 
 #[cfg(test)]
@@ -168,5 +186,21 @@ mod tests {
         // In R this is pchisq(2.0,2)
         assert!(almost_equal(chi2(2.0, 2), 0.6321205588, 1e-6));
         assert!(almost_equal(chi2(2.0, 3), 0.4275932955, 1e-6));
+    }
+
+    #[test]
+    // BetaRegularized[0.5, 1, 3] 
+    fn betai_test(){
+	let (x,a,b)= (0.5, 1.0, 3.0);
+	let res = betai(x,a,b);
+	assert!(almost_equal(res, 0.875, 1e-6));
+    }
+    
+    #[test]
+    // Log[Beta[2.0, 3.0]] = -2.48491
+    fn betaln_test(){
+	let (a,b)= (2.0, 3.0);
+	let res = betaln(a,b);
+	assert!(almost_equal(res, -2.48491, 1e-5));
     }
 }
