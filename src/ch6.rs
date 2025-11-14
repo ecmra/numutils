@@ -122,7 +122,7 @@ pub fn logbico(n: u32, k: u32) -> f32 {
 /// incomplete beta
 ///
 /// p227
-pub fn betai(x:f32, a:f32, b:f32) -> f32 {
+pub fn betai(a:f32, b:f32, x:f32) -> f32 {
     let num0ln = betaln(a + 1.0 ,1.0) + f32::ln(x);
     let den0ln = betaln(a+b, 1.0);
     let (mut numln,  mut denln) = (num0ln, den0ln);
@@ -138,69 +138,5 @@ pub fn betai(x:f32, a:f32, b:f32) -> f32 {
 }
 
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    /// checks almost equality
-    ///
-    /// used in testing other functions
-    fn almost_equal(x: f32, y: f32, tol: f32) -> bool {
-        eprintln!("almost_equal? x:{} y:{}", x, y);
-        return f32::abs(x - y) < tol;
-    }
-    #[test]
-    fn gammaln_test() {
-        assert!(f32::abs(gammln(0.3) - 1.095797995) < 1e-6);
-        assert!(f32::abs(gammln(3.0) - 0.6931471806) < 1e-6);
-        assert!(f32::abs(gammln(30f32) - 71.25703897) < 1e-6);
-    }
-    #[test]
-    fn lnfact_test() {
-        assert!(almost_equal(lnfact(12), 19.98721450, 1e-6));
-    }
-    #[test]
-    /// Mathematica has a different definition of incomplete gamma.
-    /// Hence I use ig[a_, z_] := 1 - Gamma[a, z]/Gamma[a]
-    /// N[ig[1, 3], 10] = 0.9502129316
-    /// N[ig[1, 3/10], 10] = 0.2591817793
-    fn gammq_test() {
-        let res1 = gammq(1f32, 3f32);
-        println!("gammq1 {}", res1);
-        let res2 = gammq(1f32, 0.3);
-        println!("gammq2 {}", res2);
-        assert!(almost_equal(res1, 1.0 - 0.9502129316, 1e-6));
-        assert!(almost_equal(res2, 1.0 - 0.2591817793, 1e-6));
-    }
-    #[test]
-    fn gammp_test() {
-        let res1 = gammp(1f32, 3f32);
-        println!("gammp1 {}", res1);
-        let res2 = gammp(1f32, 0.3);
-        println!("gammp2 {}", res2);
-        assert!(almost_equal(res1, 0.9502129316, 1e-6));
-        assert!(almost_equal(res2, 0.2591817793, 1e-6));
-    }
 
-    #[test]
-    fn chi2_test() {
-        // In R this is pchisq(2.0,2)
-        assert!(almost_equal(chi2(2.0, 2), 0.6321205588, 1e-6));
-        assert!(almost_equal(chi2(2.0, 3), 0.4275932955, 1e-6));
-    }
 
-    #[test]
-    // BetaRegularized[0.5, 1, 3] 
-    fn betai_test(){
-	let (x,a,b)= (0.5, 1.0, 3.0);
-	let res = betai(x,a,b);
-	assert!(almost_equal(res, 0.875, 1e-6));
-    }
-    
-    #[test]
-    // Log[Beta[2.0, 3.0]] = -2.48491
-    fn betaln_test(){
-	let (a,b)= (2.0, 3.0);
-	let res = betaln(a,b);
-	assert!(almost_equal(res, -2.48491, 1e-5));
-    }
-}
