@@ -1,5 +1,5 @@
 Numerical functions in Rust. Organized following chapters in 
-Numerical Recipes, although sometimes the algorithms 
+Numerical Recipes; sometimes the algorithms 
 do not coincide.
 
 
