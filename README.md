@@ -1,6 +1,12 @@
 Numerical functions in Rust. Organized following chapters in 
-Numerical Recipes, although in general the algortihms I use here 
-do not coincide with the ones suggested there.
+Numerical Recipes, although sometimes the algorithms 
+do not coincide.
+
+
+| ch5  | evaluation of functions         |
+| ch6  | special functions               |
+| ch14 | statistical description of data |
+| ch20 | less numerical algorithms       |
 
 
 
