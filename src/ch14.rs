@@ -3,26 +3,26 @@
 use crate::ch6;
 
 /// variance
-pub fn var(x:&Vec<f32>, mean:f32) -> f32 {
+pub fn var(x: &[f32], mean: f32) -> f32 {
     let n = x.len();
-    let mut s:f32=0.0;
+    let mut s: f32 = 0.0;
     for j in 0..n {
-	s+= x[j] * x[j] 
+        s += x[j] * x[j]
     }
-    return 1.0/(n-1) as f32 * ( s - n as f32 * mean * mean); 
+    return 1.0 / (n - 1) as f32 * (s - n as f32 * mean * mean);
 }
 
 /// average, variance
-pub fn avevar(x:&Vec<f32>) -> (f32, f32) {
+pub fn avevar(x: &[f32]) -> (f32, f32) {
     let n = x.len();
-    let ave = x.iter().sum::<f32>()/(n as f32);
-    let (mut var, mut ep) = (0f32,0f32); 
+    let ave = x.iter().sum::<f32>() / (n as f32);
+    let (mut var, mut ep) = (0f32, 0f32);
     for j in 0..n {
-	let s  = x[j] - ave;
-	var += s*s;
-	ep += s;
+        let s = x[j] - ave;
+        var += s * s;
+        ep += s;
     }
-    (ave, (var - ep*ep/(n as f32))/( n as f32 - 1.0) )
+    (ave, (var - ep * ep / (n as f32)) / (n as f32 - 1.0))
 }
 
 macro_rules! sqr {
@@ -33,24 +33,24 @@ macro_rules! sqr {
     };
 }
 
-
 /// t-test, unequal variances
 ///
 /// return t statistics, 1-pval
-pub fn tutest(x1:&Vec<f32>, x2:&Vec<f32>) -> (f32, f32) {
-    let (n1, n2)= (x1.len() as f32 , x2.len() as f32);
+pub fn tutest(x1: &[f32], x2: &[f32]) -> (f32, f32) {
+    let (n1, n2) = (x1.len() as f32, x2.len() as f32);
     let (ave1, var1) = avevar(x1);
-    let(ave2, var2) = avevar(x2);
-    let t = (ave1 - ave2)/f32::sqrt(var1/n1 + var2/n2 );
-    let df = sqr!(var1/n1+var2/n2)/(sqr!(var1/n1)/(n1-1f32)+sqr!(var2/n2)/(n2-1f32));
-    let pval = ch6::betai(0.5*df,0.5,df/(df+sqr!(t)));
+    let (ave2, var2) = avevar(x2);
+    let t = (ave1 - ave2) / f32::sqrt(var1 / n1 + var2 / n2);
+    let df = sqr!(var1 / n1 + var2 / n2)
+        / (sqr!(var1 / n1) / (n1 - 1f32) + sqr!(var2 / n2) / (n2 - 1f32));
+    let pval = ch6::betai(0.5 * df, 0.5, df / (df + sqr!(t)));
     (t, pval)
 }
- 
+
 /// return index which sort a vector
 ///
 /// eg order(c(8,1,3)) [1] 1 2 0
-fn order(v: &Vec<f32>, dec: bool) -> Vec<usize> {
+fn order(v: &[f32], dec: bool) -> Vec<usize> {
     let mut idx: Vec<usize> = (1..v.len() + 1).into_iter().collect();
     //println!("{:?}", idx);
     if dec {
@@ -64,7 +64,7 @@ fn order(v: &Vec<f32>, dec: bool) -> Vec<usize> {
 /// cumulative minimum
 ///
 /// cummin(v)[j] = min(v[0..j])
-fn cummin(v: &Vec<f32>) -> Vec<f32> {
+fn cummin(v: &[f32]) -> Vec<f32> {
     let mut res: Vec<f32> = vec![0.0; v.len()];
     res[0] = v[0];
     for i in 1..v.len() {
@@ -81,7 +81,7 @@ fn cummin(v: &Vec<f32>) -> Vec<f32> {
 ///
 /// create a vector which stores at each position
 /// the minimum of v1 and v2 at the same index
-fn pmin(v1: &Vec<f32>, v2: &Vec<f32>) -> Vec<f32> {
+fn pmin(v1: &[f32], v2: &[f32]) -> Vec<f32> {
     let mut res: Vec<f32> = vec![0.0; v1.len()];
     for i in 0..v1.len() {
         if v1[i] < v2[i] {
